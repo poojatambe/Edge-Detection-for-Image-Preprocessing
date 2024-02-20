@@ -9,6 +9,7 @@ Exploring and understanding edge detection methods in computer vision.
 * Robert
 * Laplacian of guassian
 * Canny
+* Holistically-Nested 
 
   
 To implement edge detection, run command:
