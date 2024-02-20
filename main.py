@@ -17,7 +17,8 @@ with st.sidebar:
     st.subheader('Edge Detection Methods:')
     option = st.radio('Select method: ',
              ['None', 'Sobel', 'Prewitt', 'Robert',
-               'Laplacian of Gaussian', 'Canny detector'])
+               'Laplacian of Gaussian', 'Canny detector',
+               'Holistically-nested'])
 
 # First convert image to array format. Based on method adjust parameters
 # and get output of edge detection for different methods.
@@ -61,7 +62,7 @@ if file is not None:
         kernel = int(st.radio('Select Kernel:', ['3', '5']))
         out = method.laplacian_edge(kernel)
         st.image(out, 'Laplacian of Gaussian', clamp=True)
-    else:
+    elif option == 'Canny detector':
         st.subheader('Canny Edge Detection')
         min_v = st.slider('Set minimum threshold:', 0, 255, 10, 1)
         max_v = st.slider('Set maximum threshold:', 0, 255, 50, 1)
@@ -73,3 +74,12 @@ if file is not None:
         c2.image(out2, 'aperture size 5', clamp=True)
         out3 = method.canny_edge(min_v, max_v, 7, l2norm)
         c3.image(out3, 'aperture size 7', clamp=True)
+    else: 
+        st.subheader('Holistically-hested Edge Detection')
+        factor = st.slider('Select scale factor:', 0.0, 1.0, 0.5, 0.1)
+        swap = st.radio('Select swapRB:', [True, False])
+        c1, c2 = st.columns(2)
+        out1, out2 = method.holistically_nested_edge(factor, swap)
+        c1.image(out1, 'Blob output', clamp=True)
+        c2.image(out2, 'HED output', clamp=True)
+    

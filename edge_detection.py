@@ -108,4 +108,31 @@ class EdgeDetect:
         canny_img = cv2.Canny(n_img, t1, t2, 
                               apertureSize=aperture_size, L2gradient=l2norm)
         return canny_img
-        
+
+    def holistically_nested_edge(self, factor, swap):
+        protoPath = r"D:/Winjit_training/ML/deploy.prototxt.txt"
+        modelPath = r"D:/Winjit_training/ML/hed_pretrained_bsds.caffemodel"
+        net = cv2.dnn.readNetFromCaffe(protoPath, modelPath) 
+        (H, W) = self.img.shape[:2]
+
+        mean_pixel_values = np.average(self.img, axis=(0, 1))
+        blob = cv2.dnn.blobFromImage(self.img,
+                                     scalefactor=factor,
+                                     size=(W, H), 
+                                     mean=(mean_pixel_values[0], 
+                                           mean_pixel_values[1], 
+                                           mean_pixel_values[2]), 
+                                    swapRB=swap, 
+                                    crop=False
+                                    )
+
+        #View image after preprocessing (blob)
+        blob_for_plot = np.moveaxis(blob[0, :, :, :], 0, 2)
+
+        # set the blob as the input to the network and perform a forward pass
+        # to compute the edges
+        net.setInput(blob)
+        hed = net.forward()
+        hed = hed[0, 0, :, :]   # Drop the other axes 
+        hed = (255 * hed).astype("uint8")  # rescale to 0-255 
+        return blob_for_plot, hed
